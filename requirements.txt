@@ -1,0 +1,8 @@
+# Force the smaller CPU-only build of PyTorch (works locally and on Streamlit Community Cloud).
+# If installation fails on your machine, delete this line and the "torch" line below.
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
+streamlit>=1.40,<2
+sentence-transformers>=3.0,<6
+pandas>=2.0
+numpy>=1.24
