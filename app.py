@@ -258,15 +258,15 @@ def page_auth():
     st.title("Welcome to FindIt AI")
     st.write("Sign in or create an account to continue.")
 
-    def go_home():
+def go_home():
     st.session_state["page"] = "Home"
 
-    if st.button(
-        "← Back to Home",
-        key="back_to_home",
-        on_click=go_home
-    ):
-        pass
+if st.button(
+    "← Back to Home",
+    key="back_to_home",
+    on_click=go_home
+):
+    pass
 
     client = get_supabase_client()
     tab_signin, tab_signup = st.tabs(["Sign in", "Create account"])
