@@ -555,8 +555,14 @@ def render_nav() -> None:
         with left:
             html(f'<div class="fi-brand">{LOGO_SVG}<div>FindIt <span>AI</span></div></div>')
         with middle:
-            st.segmented_control("Main navigation", NAV_PAGES, selection_mode="single", key="page",
-                                 label_visibility="collapsed", on_change=restore_page_if_deselected)
+            st.segmented_control(
+    "Main navigation",
+    NAV_PAGES,
+    selection_mode="single",
+    key="main_navigation",
+    label_visibility="collapsed",
+    on_change=lambda: go_to(st.session_state["main_navigation"])
+)
         with right:
             st.button(
     "Sign In",
