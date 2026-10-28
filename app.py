@@ -250,6 +250,7 @@ def sign_out():
     """Clear the local authentication state."""
     st.session_state.pop("findit_user", None)
     st.session_state.pop("findit_email", None)
+    st.session_state.pop("findit_name", None)
     st.session_state.pop("findit_access_token", None)
 
 
@@ -301,6 +302,7 @@ def page_auth():
 
     with tab_signup:
         with st.form("findit_signup_form"):
+            full_name = st.text_input("Full name",key="signup_full_name")
             new_email = st.text_input("Email address", key="signup_email")
             new_password = st.text_input(
                 "Create password", type="password", key="signup_password"
@@ -325,12 +327,16 @@ def page_auth():
         "password": new_password,
     },
     options={
-        "email_redirect_to": "https://prachi292004-findit-ai-app-p7adoj.streamlit.app/"
+        "data": {
+            "full_name": full_name.strip()
+        },
+        "email_redirect_to": "https://YOUR-APP-NAME.streamlit.app"
     }
 )
                     if response.session and response.user:
                         st.session_state["findit_user"] = response.user.id
                         st.session_state["findit_email"] = response.user.email
+                        st.session_state["findit_name"] = (user.user_metadata.get("full_name", "")if user.user_metadata else "")
                         st.session_state["findit_access_token"] = (
                             response.session.access_token
                         )
@@ -567,13 +573,32 @@ def render_nav() -> None:
     on_change=lambda: go_to(st.session_state["main_navigation"])
 )
         with right:
-            st.button(
-    "Sign In",
-    type="primary",
-    key="nav_cta",
-    on_click=go_to,
-    args=("Sign In",),
-)
+            user_id = st.session_state.get("findit_user")
+
+            if user_id:
+                email = st.session_state.get("findit_email", "")
+                display_name = st.session_state.get("findit_name") or (
+                    email.split("@")[0] if email else "My Account"
+                )
+
+                with st.popover(f"👤 {display_name}"):
+                    st.write(f"Signed in as: {email}")
+
+                    if st.button("My Reports", key="nav_my_reports"):
+                        go_to("My Reports")
+
+                    if st.button("Sign Out", key="nav_sign_out"):
+                        sign_out()
+                        st.session_state["page"] = "Home"
+                        st.rerun()
+            else:
+                st.button(
+                    "Sign In",
+                    type="primary",
+                    key="nav_cta",
+                    on_click=go_to,
+                    args=("Sign In",),
+                )
 
 
 def render_stat_cards(data: dict, settings: dict) -> None:
