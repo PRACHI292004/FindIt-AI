@@ -1,5 +1,5 @@
 """
-app.py - Streamlit interface for FindIt AI.
+app.py - Streamlit interface for LinkdIt AI.
 
 All matching logic lives in matcher.py. This file draws the pages, caches the
 slow things (dataset, model, embeddings) and turns errors into friendly messages.
@@ -18,7 +18,7 @@ from supabase import create_client
 import matcher
 
 st.set_page_config(
-    page_title="FindIt AI | Lost and Found Matching",
+    page_title="LinkdIt AI | Lost and Found Matching",
     page_icon="🔎",
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -191,7 +191,7 @@ details.fi-contact .fi-privacy { color:var(--muted); font-size:.85rem; margin:.4
 """
 
 LOGO_SVG = (
-    '<svg width="34" height="34" viewBox="0 0 48 48" role="img" aria-label="FindIt AI logo" xmlns="http://www.w3.org/2000/svg">'
+    '<svg width="34" height="34" viewBox="0 0 48 48" role="img" aria-label="LinkdIt AI logo" xmlns="http://www.w3.org/2000/svg">'
     '<rect width="48" height="48" rx="12" fill="#172554"/>'
     '<circle cx="21" cy="21" r="9" fill="none" stroke="#14B8A6" stroke-width="4"/>'
     '<path d="M28 28 L37 37" stroke="#14B8A6" stroke-width="4" stroke-linecap="round"/>'
@@ -256,9 +256,10 @@ def sign_out():
 
 def page_auth():
     """Display the sign-in and account creation screen."""
-    st.title("Welcome to FindIt AI")
+    st.title("Welcome to LinkdIt AI")
     st.write("Sign in or create an account to continue.")
 
+    st.markdown("**Lost it. Link it. Find it.**")
     def go_home():
         st.session_state["page"] = "Home"
 
@@ -379,7 +380,7 @@ def authentication_gate() -> bool:
                     st.rerun()
         return True
 
-    st.title("🔎 FindIt AI")
+    st.title("🔎 LinkdIt AI")
     st.subheader("Secure account access")
     st.write("Sign in or create an account to continue.")
 
@@ -562,7 +563,7 @@ def render_nav() -> None:
     with st.container(key="navbar"):
         left, middle, right = st.columns([2, 5, 2], vertical_alignment="center")
         with left:
-            html(f'<div class="fi-brand">{LOGO_SVG}<div>FindIt <span>AI</span></div></div>')
+            html(f'<div class="fi-brand">{LOGO_SVG}<div>LinkdIt <span>AI</span></div></div>')
         with middle:
             st.segmented_control(
     "Main navigation",
@@ -634,7 +635,7 @@ def render_steps() -> None:
 
 def render_footer() -> None:
     html("""
-    <div class="fi-footer"><b>FindIt AI</b> is a college project that suggests lost-and-found reports with similar
+    <div class="fi-footer"><b>LinkdIt AI</b> is a college project that suggests lost-and-found reports with similar
     wording to your description, using SentenceTransformers.<br>
     Similarity scores show how alike two pieces of text are. They do not confirm that an item is yours.<br>
     Please do not submit unnecessary sensitive personal information (ID numbers, passwords, financial details).</div>
@@ -647,10 +648,16 @@ def render_footer() -> None:
 def page_home(data: dict, settings: dict) -> None:
     with st.container(key="hero"):
         text_col, art_col = st.columns([3, 2], vertical_alignment="center")
-        with text_col:
-            html("<h1>Lost Something? Let's Find It.</h1>"
-                 "<p>Describe your missing item and let AI search for similar reports using meaning, "
-                 "context, and item details.</p>")
+        
+    with text_col:
+        html(
+        "<h1>LinkdIt AI</h1>"
+        "<h3 style='font-style: italic;'>"
+        "Lost it. Link it. Find it."
+        "</h3>"
+        "<p>Describe your missing item and let AI search for similar reports using meaning, "
+        "context, and item details.</p>"
+        )
             b1, b2, _ = st.columns([1.3, 1.3, 1])
             b1.button("Find My Item", key="hero_find", on_click=go_to, args=("Find an Item",))
             b2.button("How It Works", key="hero_how", on_click=go_to, args=("How It Works",))
@@ -664,7 +671,7 @@ def page_home(data: dict, settings: dict) -> None:
 
     html('<h2 class="fi-section-title">How it works in three steps</h2>')
     render_steps()
-    html('<div class="fi-note">FindIt AI helps you spot reports that may describe your item. It cannot guarantee '
+    html('<div class="fi-note">LinkdIt AI helps you spot reports that may describe your item. It cannot guarantee '
          "recovery or verify ownership; always confirm details with the person who found it.</div>")
 
 
@@ -840,11 +847,11 @@ def page_how() -> None:
 **Reading the score.** The percentage is `((cosine similarity + 1) / 2) × 100`. It is a transformed similarity
 score, not the probability that an item belongs to you, and it does not verify ownership.
 """)
-    html('<div class="fi-note">FindIt AI does not guarantee recovery of any item. Always confirm details with the finder.</div>')
+    html('<div class="fi-note">LinkdIt AI does not guarantee recovery of any item. Always confirm details with the finder.</div>')
 
 
 def page_about() -> None:
-    html('<h1 style="margin-bottom:.2rem">About FindIt AI</h1>'
+    html('<h1 style="margin-bottom:.2rem">About LinkdIt AI</h1>'
          f'<div class="fi-lead">{escape(TAGLINE)}</div>')
     st.markdown(f"""
 **The problem.** Lost-and-found notice boards and spreadsheets are hard to search. People describe the same
