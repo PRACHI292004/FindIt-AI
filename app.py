@@ -24,6 +24,116 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+
+st.markdown("""
+<style>
+
+/* ===== GLOBAL FONT AND BACKGROUND ===== */
+html, body, [class*="stApp"] {
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+
+.stApp {
+    background:
+        radial-gradient(
+            ellipse at top left,
+            rgba(117, 104, 245, 0.12),
+            transparent 45%
+        ),
+        #F5F6FC;
+}
+
+/* ===== MAIN CONTENT SPACING ===== */
+.block-container {
+    max-width: 1200px;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* ===== HEADINGS ===== */
+h1, h2, h3 {
+    color: #191A35;
+    letter-spacing: -0.6px;
+}
+
+h1 {
+    font-weight: 800 !important;
+}
+
+/* ===== PRIMARY AND SECONDARY BUTTONS ===== */
+.stButton > button,
+.stFormSubmitButton > button {
+    border-radius: 12px;
+    border: 1px solid #7568F5;
+    background: linear-gradient(
+        135deg,
+        #7568F5,
+        #6254DF
+    );
+    color: white;
+    font-weight: 700;
+    padding: 0.55rem 1rem;
+    transition: all 0.2s ease;
+}
+
+/* BUTTON HOVER EFFECT */
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+    background: linear-gradient(
+        135deg,
+        #6254DF,
+        #5143C6
+    );
+    color: white;
+    border-color: #5143C6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(117, 104, 245, 0.25);
+}
+
+/* ===== TEXT INPUTS ===== */
+.stTextInput input,
+.stTextArea textarea,
+.stDateInput input {
+    border-radius: 10px;
+}
+
+/* ===== SELECT BOXES ===== */
+.stSelectbox [data-baseweb="select"] {
+    border-radius: 10px;
+}
+
+/* ===== TABS ===== */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* ===== NAVIGATION BRAND ===== */
+.fi-brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* ===== METRIC CARDS ===== */
+div[data-testid="stMetric"] {
+    background: white;
+    padding: 18px;
+    border: 1px solid #E7E8F3;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(30, 35, 80, 0.04);
+}
+
+/* ===== SIDEBAR ===== */
+section[data-testid="stSidebar"] {
+    background: #F0F0FC;
+}
+
+/* ===== HOME PAGE HERO ===== */
 .linked-hero {
     padding: 22px 0;
 }
@@ -43,7 +153,11 @@ st.set_page_config(
 }
 
 .linked-hero h1 span {
-    background: linear-gradient(90deg, #7568F5, #27B9A5);
+    background: linear-gradient(
+        90deg,
+        #7568F5,
+        #27B9A5
+    );
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;
@@ -61,6 +175,9 @@ st.set_page_config(
     line-height: 1.8;
     max-width: 650px;
 }
+
+</style>
+""", unsafe_allow_html=True)
 
 st.markdown("""
 <style>
