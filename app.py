@@ -38,26 +38,30 @@ html, body, [class*="stApp"] {
 }
 
 
-/* ===== RICH VIOLET BACKGROUND ===== */
+
+/* Richer violet background */
 .stApp,
 [data-testid="stAppViewContainer"] {
-    background:
-        radial-gradient(
-            circle at 5% 5%,
-            rgba(139, 92, 246, 0.24),
-            transparent 35%
-        ),
-        radial-gradient(
-            circle at 95% 45%,
-            rgba(91, 75, 210, 0.16),
-            transparent 32%
-        ),
-        linear-gradient(
-            135deg,
-            #DDD5FF 0%,
-            #E6E1FF 48%,
-            #D8E8FA 100%
-        ) !important;
+    background: linear-gradient(
+        135deg,
+        #D4C8FF 0%,
+        #DCD4FF 45%,
+        #C9DDF8 100%
+    ) !important;
+}
+
+/* More distinctive brand typography */
+.fi-brand,
+.linked-hero h1 {
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 800 !important;
+    letter-spacing: -1.5px !important;
+}
+
+/* Make the hero tagline stand out */
+.linked-hero h3 {
+    color: #FFFFFF !important;
+    font-weight: 700 !important;
 }
 
 /* ===== MAIN CONTENT SPACING ===== */
