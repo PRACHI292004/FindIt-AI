@@ -37,25 +37,27 @@ html, body, [class*="stApp"] {
     font-family: 'Inter', sans-serif;
 }
 
-/* ===== LAVENDER-BLUE-MINT BACKGROUND ===== */
-.stApp {
+
+/* ===== RICH VIOLET BACKGROUND ===== */
+.stApp,
+[data-testid="stAppViewContainer"] {
     background:
         radial-gradient(
             circle at 5% 5%,
-            rgba(117, 104, 245, 0.16),
-            transparent 32%
+            rgba(139, 92, 246, 0.24),
+            transparent 35%
         ),
         radial-gradient(
             circle at 95% 45%,
-            rgba(39, 185, 165, 0.10),
-            transparent 30%
+            rgba(91, 75, 210, 0.16),
+            transparent 32%
         ),
         linear-gradient(
             135deg,
-            #F4F2FF 0%,
-            #F5F8FF 50%,
-            #EAF8F7 100%
-        );
+            #DDD5FF 0%,
+            #E6E1FF 48%,
+            #D8E8FA 100%
+        ) !important;
 }
 
 /* ===== MAIN CONTENT SPACING ===== */
@@ -140,12 +142,23 @@ h3 {
     font-weight: 600;
 }
 
-/* ===== NAVIGATION BRAND ===== */
+
+/* ===== PREMIUM BRAND FONT ===== */
 .fi-brand {
-    font-family: 'Poppins', sans-serif;
-    font-size: 1.35rem;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 1.45rem;
     font-weight: 800;
-    letter-spacing: -0.5px;
+    letter-spacing: -1px;
+}
+
+.linked-hero h1 {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800 !important;
+    letter-spacing: -1.5px;
+}
+.fi-brand span {
+    color: #7568F5;
 }
 
 /* ===== METRIC CARDS ===== */
