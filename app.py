@@ -25,22 +25,37 @@ st.set_page_config(
 )
 
 
+
 st.markdown("""
 <style>
 
-/* ===== GLOBAL FONT AND BACKGROUND ===== */
+/* ===== GOOGLE FONTS ===== */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
+/* ===== GLOBAL FONT ===== */
 html, body, [class*="stApp"] {
-    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
+/* ===== LAVENDER-BLUE-MINT BACKGROUND ===== */
 .stApp {
     background:
         radial-gradient(
-            ellipse at top left,
-            rgba(117, 104, 245, 0.12),
-            transparent 45%
+            circle at 5% 5%,
+            rgba(117, 104, 245, 0.16),
+            transparent 32%
         ),
-        #F5F6FC;
+        radial-gradient(
+            circle at 95% 45%,
+            rgba(39, 185, 165, 0.10),
+            transparent 30%
+        ),
+        linear-gradient(
+            135deg,
+            #F4F2FF 0%,
+            #F5F8FF 50%,
+            #EAF8F7 100%
+        );
 }
 
 /* ===== MAIN CONTENT SPACING ===== */
@@ -52,6 +67,7 @@ html, body, [class*="stApp"] {
 
 /* ===== HEADINGS ===== */
 h1, h2, h3 {
+    font-family: 'Poppins', sans-serif;
     color: #191A35;
     letter-spacing: -0.6px;
 }
@@ -60,9 +76,18 @@ h1 {
     font-weight: 800 !important;
 }
 
-/* ===== PRIMARY AND SECONDARY BUTTONS ===== */
+h2 {
+    font-weight: 700 !important;
+}
+
+h3 {
+    font-weight: 600 !important;
+}
+
+/* ===== BUTTONS ===== */
 .stButton > button,
 .stFormSubmitButton > button {
+    font-family: 'Inter', sans-serif;
     border-radius: 12px;
     border: 1px solid #7568F5;
     background: linear-gradient(
@@ -76,7 +101,7 @@ h1 {
     transition: all 0.2s ease;
 }
 
-/* BUTTON HOVER EFFECT */
+/* ===== BUTTON HOVER EFFECT ===== */
 .stButton > button:hover,
 .stFormSubmitButton > button:hover {
     background: linear-gradient(
@@ -95,11 +120,13 @@ h1 {
 .stTextArea textarea,
 .stDateInput input {
     border-radius: 10px;
+    font-family: 'Inter', sans-serif;
 }
 
 /* ===== SELECT BOXES ===== */
 .stSelectbox [data-baseweb="select"] {
     border-radius: 10px;
+    font-family: 'Inter', sans-serif;
 }
 
 /* ===== TABS ===== */
@@ -109,11 +136,13 @@ h1 {
 
 .stTabs [data-baseweb="tab"] {
     border-radius: 10px;
+    font-family: 'Inter', sans-serif;
     font-weight: 600;
 }
 
 /* ===== NAVIGATION BRAND ===== */
 .fi-brand {
+    font-family: 'Poppins', sans-serif;
     font-size: 1.35rem;
     font-weight: 800;
     letter-spacing: -0.5px;
@@ -121,16 +150,20 @@ h1 {
 
 /* ===== METRIC CARDS ===== */
 div[data-testid="stMetric"] {
-    background: white;
+    background: rgba(255, 255, 255, 0.88);
     padding: 18px;
-    border: 1px solid #E7E8F3;
+    border: 1px solid #E0E3F2;
     border-radius: 16px;
-    box-shadow: 0 4px 16px rgba(30, 35, 80, 0.04);
+    box-shadow: 0 4px 16px rgba(30, 35, 80, 0.06);
 }
 
 /* ===== SIDEBAR ===== */
 section[data-testid="stSidebar"] {
-    background: #F0F0FC;
+    background: linear-gradient(
+        180deg,
+        #EFEDFF,
+        #EAF8F7
+    );
 }
 
 /* ===== HOME PAGE HERO ===== */
@@ -146,8 +179,11 @@ section[data-testid="stSidebar"] {
     margin-bottom: 12px;
 }
 
+/* ===== HERO TITLE ===== */
 .linked-hero h1 {
+    font-family: 'Poppins', sans-serif;
     font-size: clamp(2.8rem, 6vw, 5rem);
+    font-weight: 800 !important;
     line-height: 1.05;
     margin-bottom: 12px;
 }
@@ -163,17 +199,34 @@ section[data-testid="stSidebar"] {
     color: transparent;
 }
 
+/* ===== HERO TAGLINE ===== */
 .linked-hero h3 {
+    color: #FFFFFF;
+    font-family: 'Poppins', sans-serif;
     font-size: clamp(1.3rem, 3vw, 2rem);
-    font-weight: 700;
+    font-weight: 700 !important;
     margin-bottom: 14px;
 }
 
+/* ===== HERO DESCRIPTION ===== */
 .linked-hero p {
-    color: #5D6078;
+    color: #E2E8FF;
+    font-family: 'Inter', sans-serif;
     font-size: 1.08rem;
     line-height: 1.8;
     max-width: 650px;
+}
+
+/* ===== RESPONSIVE ADJUSTMENTS ===== */
+@media (max-width: 768px) {
+    .block-container {
+        padding-top: 1rem;
+        padding-bottom: 2rem;
+    }
+
+    .linked-hero {
+        padding: 12px 0;
+    }
 }
 
 </style>
