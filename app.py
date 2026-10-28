@@ -258,7 +258,7 @@ def page_auth():
     st.title("Welcome to FindIt AI")
     st.write("Sign in or create an account to continue.")
 
-    if st.button("← Back to Home"):
+    if st.button("← Back to Home", key="back_to_home"):
         st.session_state["page"] = "Home"
         st.rerun()
 
