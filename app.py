@@ -24,6 +24,145 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
+.linked-hero {
+    padding: 22px 0;
+}
+
+.linked-eyebrow {
+    color: #7568F5;
+    font-size: 0.78rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 12px;
+}
+
+.linked-hero h1 {
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1.05;
+    margin-bottom: 12px;
+}
+
+.linked-hero h1 span {
+    background: linear-gradient(90deg, #7568F5, #27B9A5);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.linked-hero h3 {
+    font-size: clamp(1.3rem, 3vw, 2rem);
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.linked-hero p {
+    color: #5D6078;
+    font-size: 1.08rem;
+    line-height: 1.8;
+    max-width: 650px;
+}
+
+st.markdown("""
+<style>
+/* Overall typography and page background */
+html, body, [class*="stApp"] {
+    font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+}
+
+.stApp {
+    background:
+        radial-gradient(ellipse at top left,
+        rgba(117, 104, 245, 0.12), transparent 45%),
+        #F5F6FC;
+}
+
+/* Main content spacing */
+.block-container {
+    max-width: 1200px;
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+}
+
+/* Main headings */
+h1, h2, h3 {
+    color: #191A35;
+    letter-spacing: -0.6px;
+}
+
+h1 {
+    font-weight: 800 !important;
+}
+
+/* Buttons */
+.stButton > button,
+.stFormSubmitButton > button {
+    border-radius: 12px;
+    border: 1px solid #7568F5;
+    background: linear-gradient(135deg, #7568F5, #6254DF);
+    color: white;
+    font-weight: 700;
+    padding: 0.55rem 1rem;
+    transition: all 0.2s ease;
+}
+
+/* Button hover */
+.stButton > button:hover,
+.stFormSubmitButton > button:hover {
+    background: linear-gradient(135deg, #6254DF, #5143C6);
+    color: white;
+    border-color: #5143C6;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(117, 104, 245, 0.25);
+}
+
+/* Input fields */
+.stTextInput input,
+.stTextArea textarea,
+.stDateInput input,
+.stSelectbox [data-baseweb="select"] {
+    border-radius: 10px;
+}
+
+/* Tabs */
+.stTabs [data-baseweb="tab-list"] {
+    gap: 10px;
+}
+
+.stTabs [data-baseweb="tab"] {
+    border-radius: 10px;
+    font-weight: 600;
+}
+
+/* Navigation brand */
+.fi-brand {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* Hero area */
+div[data-testid="stVerticalBlock"]:has(
+    > div[data-testid="stVerticalBlockBorderWrapper"]
+) {
+    border-radius: 18px;
+}
+
+/* Smooth visual feel */
+div[data-testid="stMetric"] {
+    background: white;
+    padding: 18px;
+    border: 1px solid #E7E8F3;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(30, 35, 80, 0.04);
+}
+
+/* Sidebar */
+section[data-testid="stSidebar"] {
+    background: #F0F0FC;
+}
+</style>
+""", unsafe_allow_html=True)
+
 TAGLINE = "Lost something? Let AI help you find it."
 NAV_PAGES = [
     "Home",
@@ -651,13 +790,19 @@ def page_home(data: dict, settings: dict) -> None:
         
     with text_col:
         html(
-        "<h1>LinkdIt AI</h1>"
-        "<h3 style='font-style: italic;'>"
-        "Lost it. Link it. Find it."
-        "</h3>"
-        "<p>Describe your missing item and let AI search for similar reports using meaning, "
-        "context, and item details.</p>"
-        )
+    """
+    <div class="linked-hero">
+        <div class="linked-eyebrow">SMARTER LOST &amp; FOUND</div>
+        <h1>LinkdIt <span>AI</span></h1>
+        <h3>Lost it. Link it. Find it.</h3>
+        <p>
+            One smart place to report lost belongings and discover
+            found items through intelligent matching.
+        </p>
+    </div>
+    """
+)
+
         b1, b2, _ = st.columns([1.3, 1.3, 1])
         b1.button("Find My Item", key="hero_find", on_click=go_to, args=("Find an Item",))
         b2.button("How It Works", key="hero_how", on_click=go_to, args=("How It Works",))
