@@ -320,11 +320,14 @@ def page_auth():
             else:
                 try:
                     response = client.auth.sign_up(
-                        {
-                            "email": new_email.strip(),
-                            "password": new_password,
-                        }
-                    )
+    {
+        "email": new_email.strip(),
+        "password": new_password,
+    },
+    options={
+        "email_redirect_to": "https://prachi292004-findit-ai-app-p7adoj.streamlit.app/"
+    }
+)
                     if response.session and response.user:
                         st.session_state["findit_user"] = response.user.id
                         st.session_state["findit_email"] = response.user.email
