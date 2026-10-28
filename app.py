@@ -31,7 +31,6 @@ NAV_PAGES = [
     "Report an Item",
     "How It Works",
     "About",
-    "My Reports",
 ]
 EXAMPLE_TEXT = "I lost a black backpack with a blue water bottle and a notebook inside near the library."
 PLACEHOLDER = "I lost a black backpack with a blue water bottle and a notebook inside..."
@@ -46,87 +45,6 @@ DEFAULT_SETTINGS = {
     "strong": matcher.DEFAULT_STRONG_THRESHOLD,
     "possible": matcher.DEFAULT_POSSIBLE_THRESHOLD,
 }
-
-# --------------------------------------------------------------------------
-# Supabase authentication and database helpers
-# Configure SUPABASE_URL and SUPABASE_ANON_KEY in Streamlit secrets.
-# Never put a service-role key in this app.
-# --------------------------------------------------------------------------
-def get_supabase():
-    try:
-        url = st.secrets["SUPABASE_URL"]
-        anon_key = st.secrets["SUPABASE_ANON_KEY"]
-    except Exception:
-        st.error("Supabase is not configured yet. Add SUPABASE_URL and SUPABASE_ANON_KEY to Streamlit secrets.")
-        st.stop()
-    return create_client(url, anon_key)
-
-
-def current_user():
-    return st.session_state.get("findit_user")
-
-
-def page_auth() -> None:
-    st.title("Welcome to FindIt AI")
-    st.write("Sign in or create an account to report items and manage their return status.")
-    mode = st.radio("Choose an option", ["Sign in", "Create account"], horizontal=True)
-    email = st.text_input("Email address", key="auth_email").strip()
-    password = st.text_input("Password", type="password", key="auth_password")
-    if st.button("Continue", type="primary"):
-        if not email or not password:
-            st.warning("Enter your email address and password.")
-            return
-        try:
-            client = get_supabase()
-            if mode == "Create account":
-                response = client.auth.sign_up({"email": email, "password": password})
-                if getattr(response, "session", None):
-                    st.session_state["findit_user"] = response.user
-                    st.session_state["findit_access_token"] = response.session.access_token
-                    st.success("Account created and signed in.")
-                    st.rerun()
-                else:
-                    st.success("Account created. Check your email to confirm it, then return here and sign in.")
-            else:
-                response = client.auth.sign_in_with_password({"email": email, "password": password})
-                st.session_state["findit_user"] = response.user
-                st.session_state["findit_access_token"] = response.session.access_token
-                st.session_state["findit_email"] = email
-                st.success("Signed in successfully.")
-                st.rerun()
-        except Exception:
-            st.error("Authentication failed. Check your details and email confirmation, then try again.")
-
-
-def authenticated_client():
-    client = get_supabase()
-    token = st.session_state.get("findit_access_token")
-    if token:
-        client.postgrest.auth(token)
-    return client
-
-
-def sign_out() -> None:
-    st.session_state.pop("findit_user", None)
-    st.session_state.pop("findit_access_token", None)
-    st.session_state.pop("findit_email", None)
-    st.session_state.pop("saved", None)
-    st.session_state["page"] = "Home"
-
-
-def load_user_reports():
-    user = current_user()
-    if not user:
-        return []
-    try:
-        result = authenticated_client().table("item_reports").select(
-            "id,report_type,category,description,location,item_date,status,created_at"
-        ).eq("user_id", user.id).order("created_at", desc=True).execute()
-        return result.data or []
-    except Exception:
-        st.error("Your reports could not be loaded. Check the database setup and policies.")
-        return []
-
 
 # --------------------------------------------------------------------------
 # Styling (palette: navy #172554, indigo #4F46E5, teal #14B8A6, off-white #F8FAFC)
@@ -297,6 +215,239 @@ HERO_ART_SVG = (
 )
 
 
+def get_supabase_client():
+    """Create one Supabase client for this Streamlit session."""
+    if "_supabase_client" not in st.session_state:
+        url = st.secrets["SUPABASE_URL"]
+        key = st.secrets["SUPABASE_ANON_KEY"]
+        st.session_state["_supabase_client"] = create_client(url, key)
+
+    return st.session_state["_supabase_client"]
+
+def load_user_reports():
+    """Load reports belonging to the currently signed-in user."""
+    client = get_supabase_client()
+    user_id = current_user()
+
+    if not user_id:
+        return []
+
+    response = (
+        client.table("item_reports")
+        .select("*")
+        .eq("user_id", user_id)
+        .execute()
+    )
+
+    return response.data or []
+
+def current_user():
+    """Return the currently authenticated user, if any."""
+    return st.session_state.get("findit_user")
+
+
+def sign_out():
+    """Clear the local authentication state."""
+    st.session_state.pop("findit_user", None)
+    st.session_state.pop("findit_email", None)
+    st.session_state.pop("findit_access_token", None)
+
+
+def page_auth():
+    """Display the sign-in and account creation screen."""
+    st.title("Welcome to FindIt AI")
+    st.write("Sign in or create an account to continue.")
+
+    if st.button("← Back to Home"):
+        st.session_state["page"] = "Home"
+        st.rerun()
+
+    client = get_supabase_client()
+    tab_signin, tab_signup = st.tabs(["Sign in", "Create account"])
+
+    with tab_signin:
+        with st.form("findit_signin_form"):
+            email = st.text_input("Email address", key="signin_email")
+            password = st.text_input(
+                "Password", type="password", key="signin_password"
+            )
+            submitted = st.form_submit_button("Sign in")
+
+        if submitted:
+            try:
+                response = client.auth.sign_in_with_password(
+                    {"email": email.strip(), "password": password}
+                )
+                user = response.user
+                if user:
+                    st.session_state["findit_user"] = user.id
+                    st.session_state["findit_email"] = user.email
+                    st.session_state["findit_access_token"] = (
+                        response.session.access_token
+                        if response.session else None
+                    )
+                    st.success("Signed in successfully!")
+                    st.rerun()
+                else:
+                    st.error("Sign-in failed. Please check your details.")
+            except Exception:
+                st.error("Sign-in failed. Check your email and password.")
+
+    with tab_signup:
+        with st.form("findit_signup_form"):
+            new_email = st.text_input("Email address", key="signup_email")
+            new_password = st.text_input(
+                "Create password", type="password", key="signup_password"
+            )
+            confirm_password = st.text_input(
+                "Confirm password", type="password", key="signup_confirm"
+            )
+            create_account = st.form_submit_button("Create account")
+
+        if create_account:
+            if not new_email.strip() or not new_password:
+                st.error("Please enter your email and password.")
+            elif new_password != confirm_password:
+                st.error("The passwords do not match.")
+            elif len(new_password) < 8:
+                st.error("Use a password with at least 8 characters.")
+            else:
+                try:
+                    response = client.auth.sign_up(
+                        {
+                            "email": new_email.strip(),
+                            "password": new_password,
+                        }
+                    )
+                    if response.session and response.user:
+                        st.session_state["findit_user"] = response.user.id
+                        st.session_state["findit_email"] = response.user.email
+                        st.session_state["findit_access_token"] = (
+                            response.session.access_token
+                        )
+                        st.success("Account created!")
+                        st.rerun()
+                    else:
+                        st.success(
+                            "Account request submitted. Check your email "
+                            "for the confirmation link before signing in."
+                        )
+                except Exception:
+                    st.error(
+                        "Account creation failed. Check your Supabase "
+                        "settings or whether this email is already registered."
+                    )
+
+def authentication_gate() -> bool:
+    """Show sign-up or sign-in and allow access only after login."""
+    try:
+        client = get_supabase_client()
+    except Exception:
+        st.error(
+            "Supabase connection could not be initialized. "
+            "Check your .streamlit/secrets.toml settings."
+        )
+        st.stop()
+
+    if st.session_state.get("authenticated", False):
+        with st.sidebar:
+            st.write(
+                "Signed in as:",
+                st.session_state.get("user_email", "User")
+            )
+            if st.button("Sign out"):
+                try:
+                    client.auth.sign_out()
+                finally:
+                    st.session_state["authenticated"] = False
+                    st.session_state.pop("user_email", None)
+                    st.rerun()
+        return True
+
+    st.title("🔎 FindIt AI")
+    st.subheader("Secure account access")
+    st.write("Sign in or create an account to continue.")
+
+    tab_login, tab_signup = st.tabs(["Sign In", "Create Account"])
+
+    with tab_login:
+        with st.form("supabase_signin_form"):
+            email = st.text_input("Email address", key="login_email")
+            password = st.text_input(
+                "Password", type="password", key="login_password"
+            )
+            login_clicked = st.form_submit_button(
+                "Sign In", type="primary"
+            )
+
+        if login_clicked:
+            if not email.strip() or not password:
+                st.warning("Enter your email address and password.")
+            else:
+                try:
+                    response = client.auth.sign_in_with_password({
+                        "email": email.strip(),
+                        "password": password,
+                    })
+                    if response.user:
+                        st.session_state["authenticated"] = True
+                        st.session_state["user_email"] = response.user.email
+                        st.rerun()
+                    else:
+                        st.error("Sign-in was unsuccessful. Please try again.")
+                except Exception:
+                    st.error(
+                        "Sign-in failed. Check your details and confirm "
+                        "your email address if required."
+                    )
+
+    with tab_signup:
+        with st.form("supabase_signup_form"):
+            new_email = st.text_input("Email address", key="signup_email")
+            new_password = st.text_input(
+                "Create a password",
+                type="password",
+                key="signup_password",
+                help="Use a strong, unique password."
+            )
+            confirm_password = st.text_input(
+                "Confirm password", type="password"
+            )
+            signup_clicked = st.form_submit_button(
+                "Create Account", type="primary"
+            )
+
+        if signup_clicked:
+            if not new_email.strip():
+                st.warning("Enter your email address.")
+            elif len(new_password) < 8:
+                st.warning("Use a password with at least 8 characters.")
+            elif new_password != confirm_password:
+                st.warning("The passwords do not match.")
+            else:
+                try:
+                    response = client.auth.sign_up({
+                        "email": new_email.strip(),
+                        "password": new_password,
+                    })
+                    if response.session and response.user:
+                        st.session_state["authenticated"] = True
+                        st.session_state["user_email"] = response.user.email
+                        st.rerun()
+                    else:
+                        st.success(
+                            "Account request submitted. Check your email "
+                            "for a confirmation link before signing in."
+                        )
+                except Exception:
+                    st.error(
+                        "Account creation failed. The email may already "
+                        "be registered, or Supabase may have rejected "
+                        "the request. Check your Supabase settings."
+                    )
+
+    return False
+
 def html(markup: str) -> None:
     """Render raw HTML. Lines are trimmed so Markdown never mistakes indentation for code."""
     compact = " ".join(line.strip() for line in markup.strip().splitlines())
@@ -401,7 +552,13 @@ def render_nav() -> None:
             st.segmented_control("Main navigation", NAV_PAGES, selection_mode="single", key="page",
                                  label_visibility="collapsed", on_change=restore_page_if_deselected)
         with right:
-            st.button("Start Searching", type="primary", key="nav_cta", on_click=go_to, args=("Find an Item",))
+            st.button(
+    "Sign In",
+    type="primary",
+    key="nav_cta",
+    on_click=go_to,
+    args=("Sign In",),
+)
 
 
 def render_stat_cards(data: dict, settings: dict) -> None:
@@ -674,63 +831,106 @@ candidates for a person to review; it does not verify ownership or replace conta
 
 def page_report() -> None:
     st.header("Report a Lost or Found Item")
-    st.write("Reports are saved to your account. Do not include passwords, Aadhaar numbers, or other sensitive ID details.")
-    user = current_user()
-    if not user:
-        st.info("Please sign in to submit a report.")
-        return
+    st.write(
+        "Submit a report to help connect lost items with the people "
+        "who find them. A photo is optional."
+    )
 
     with st.form("report_item_form", clear_on_submit=True):
-        report_type_label = st.radio("What are you reporting?", ["Lost Item", "Found Item"], horizontal=True)
-        category = st.selectbox("Item category", ["Bag", "Electronics", "Wallet", "Keys", "Clothing", "Bottle", "Other"])
-        description = st.text_area("Describe the item", placeholder="Include colour, brand, distinctive marks, and useful details.", max_chars=1000)
-        location = st.text_input("Where was it lost or found?")
-        report_date = st.date_input("Date lost or found")
-        submitted = st.form_submit_button("Submit Report", type="primary")
+        report_type = st.radio(
+            "What are you reporting?",
+            ["Lost Item", "Found Item"],
+            horizontal=True,
+        )
+
+        category = st.selectbox(
+            "Item category",
+            [
+                "Bag",
+                "Electronics",
+                "Wallet",
+                "Keys",
+                "Clothing",
+                "Bottle",
+                "Other",
+            ],
+        )
+
+        description = st.text_area(
+            "Describe the item",
+            placeholder=(
+                "Include colour, brand, distinctive marks, "
+                "and other useful details."
+            ),
+            max_chars=1000,
+        )
+
+        location = st.text_input(
+            "Where was it lost or found?"
+        )
+
+        report_date = st.date_input(
+            "Date lost or found"
+        )
+
+        photo = st.file_uploader(
+            "Upload an item photo (optional)",
+            type=["jpg", "jpeg", "png"],
+        )
+
+        contact = st.text_input(
+            "Contact information (keep this private)"
+        )
+
+        submitted = st.form_submit_button(
+            "Submit Report",
+            type="primary",
+        )
 
     if submitted:
-        if not description.strip() or not location.strip():
-            st.error("Please enter both a description and location.")
-            return
-        row = {
-            "user_id": user.id,
-            "report_type": "lost" if report_type_label == "Lost Item" else "found",
-            "category": category,
-            "description": description.strip(),
-            "location": location.strip(),
-            "item_date": report_date.isoformat(),
-            "status": "available",
-        }
-        try:
-            authenticated_client().table("item_reports").insert(row).execute()
-            st.success("Your report has been saved. It will remain active until its status is updated.")
-            st.rerun()
-        except Exception:
-            st.error("The report could not be saved. Check that the SQL setup has been completed and try again.")
+        if not description.strip():
+            st.error("Please enter an item description.")
+        elif not location.strip():
+            st.error("Please enter the location.")
+        else:
+            report = {
+                "type": report_type,
+                "category": category,
+                "description": description.strip(),
+                "location": location.strip(),
+                "date": report_date.isoformat(),
+                "photo_name": photo.name if photo else None,
+                "contact": contact.strip(),
+            }
 
+            # Temporary storage for testing this form.
+            # A database will be needed for permanent reports.
+            if "demo_reports" not in st.session_state:
+                st.session_state["demo_reports"] = []
 
-def page_my_reports() -> None:
-    st.header("My Reports")
-    st.caption("Manage reports submitted by your account. Mark a found item as returned only after the handover is complete.")
-    reports = load_user_reports()
-    if not reports:
-        st.info("You have no saved reports yet.")
-        return
-    for report in reports:
-        with st.container(border=True):
-            st.markdown(f"**{report['report_type'].title()} item — {report['category']}**")
-            st.write(report["description"])
-            st.caption(f"Location: {report['location']} · Date: {report['item_date']} · Status: {report['status']}")
-            if report["status"] not in ("returned", "closed"):
-                if st.button("Mark as returned", key=f"returned_{report['id']}"):
-                    try:
-                        # RLS limits this update to the report owner's account.
-                        authenticated_client().table("item_reports").update({"status": "returned"}).eq("id", report["id"]).eq("user_id", current_user().id).execute()
-                        st.success("Marked as returned. It will no longer appear in the active database reports.")
-                        st.rerun()
-                    except Exception:
-                        st.error("Could not update this report. Please try again.")
+            st.session_state["demo_reports"].append(report)
 
+            st.success(
+                "Report accepted for this demo. "
+                "Permanent storage and AI matching are not connected yet."
+            )
+
+    reports = st.session_state.get("demo_reports", [])
+
+    if reports:
+        st.subheader("Reports submitted in this session")
+        for report in reversed(reports):
+            st.markdown(
+                f"**{report['type']} — {report['category']}**"
+            )
+            st.write(f"Description: {report['description']}")
+            st.write(f"Location: {report['location']}")
+            st.write(f"Date: {report['date']}")
+            st.divider()
+
+# --------------------------------------------------------------------------
+# App entry
+# --------------------------------------------------------------------------
 
 # --------------------------------------------------------------------------
 # App entry
@@ -739,30 +939,64 @@ st.session_state.setdefault("page", "Home")
 st.session_state.setdefault("query_text", "")
 settings = st.session_state.setdefault("settings", dict(DEFAULT_SETTINGS))
 
-if not current_user():
+current_page = st.session_state.get("page") or "Home"
+
+# Show authentication only when the visitor clicks Sign In.
+if current_page == "Sign In":
+    if current_user():
+        st.session_state["page"] = "Home"
+        st.rerun()
+
     page_auth()
     st.stop()
 
-with st.sidebar:
-    st.write(f"Signed in as **{st.session_state.get('findit_email', 'verified user')}**")
-    st.button("Sign out", on_click=sign_out, use_container_width=True)
+# Show account information and sign-out for logged-in users.
+if current_user():
+    with st.sidebar:
+        st.write("Signed in as:")
+        st.write(st.session_state.get("findit_email", "Authenticated user"))
 
-current_page = st.session_state.get("page") or "Home"
+        if st.button("Sign out"):
+            sign_out()
+            st.session_state["page"] = "Home"
+            st.rerun()
+
+# Display the existing app and its original home page.
 st.session_state["_last_page"] = current_page
 
 render_nav()
 dataset = load_data()
 
+
+# Protect search and report pages from users who are not signed in.
+if current_page in ("Find an Item", "Report an Item") and not current_user():
+    st.warning("Please sign in or create an account to continue.")
+    page_auth()
+    st.stop()
+
 if current_page == "Find an Item":
     page_find(dataset, settings)
+elif current_page == "Report an Item":
+    if not current_user():
+        st.session_state["page"] = "Sign In"
+        st.rerun()
+    page_report()
+elif current_page == "My Reports":
+    if not current_user():
+        st.session_state["page"] = "Sign In"
+        st.rerun()
+
+    st.header("My Reports")
+    reports = load_user_reports()
+
+    if reports:
+        st.dataframe(reports, use_container_width=True)
+    else:
+        st.info("You have not submitted any reports yet.")
 elif current_page == "How It Works":
     page_how()
 elif current_page == "About":
     page_about()
-elif current_page == "Report an Item":
-    page_report()
-elif current_page == "My Reports":
-    page_my_reports()
 else:
     page_home(dataset, settings)
 
