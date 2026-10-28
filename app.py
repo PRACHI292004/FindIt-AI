@@ -658,11 +658,11 @@ def page_home(data: dict, settings: dict) -> None:
         "<p>Describe your missing item and let AI search for similar reports using meaning, "
         "context, and item details.</p>"
         )
-            b1, b2, _ = st.columns([1.3, 1.3, 1])
-            b1.button("Find My Item", key="hero_find", on_click=go_to, args=("Find an Item",))
-            b2.button("How It Works", key="hero_how", on_click=go_to, args=("How It Works",))
-        with art_col:
-            html(HERO_ART_SVG)
+        b1, b2, _ = st.columns([1.3, 1.3, 1])
+        b1.button("Find My Item", key="hero_find", on_click=go_to, args=("Find an Item",))
+        b2.button("How It Works", key="hero_how", on_click=go_to, args=("How It Works",))
+    with art_col:
+        html(HERO_ART_SVG)
 
     if data["ok"]:
         render_stat_cards(data, settings)
