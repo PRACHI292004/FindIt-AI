@@ -977,8 +977,8 @@ dataset = load_data()
 # Protect search and report pages from users who are not signed in.
 if current_page in ("Find an Item", "Report an Item") and not current_user():
     st.warning("Please sign in or create an account to continue.")
-    page_auth()
-    st.stop()
+    st.session_state["page"] = "Sign In"
+    st.rerun()
 
 if current_page == "Find an Item":
     page_find(dataset, settings)
