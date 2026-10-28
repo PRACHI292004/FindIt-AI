@@ -330,6 +330,68 @@ div[data-testid="stMetric"] {
 section[data-testid="stSidebar"] {
     background: #F0F0FC;
 }
+
+
+/* ===== LINKDIT AI VISUAL OVERRIDES ===== */
+
+/* Stronger pastel background */
+html, body, [data-testid="stAppViewContainer"] {
+    background: linear-gradient(
+        135deg,
+        #EDE9FF 0%,
+        #F0F5FF 50%,
+        #E0F8F2 100%
+    ) !important;
+}
+
+/* Modern font throughout the app */
+.stApp,
+.stApp p,
+.stApp label,
+.stApp input,
+.stApp textarea,
+.stApp button {
+    font-family: 'Inter', 'Segoe UI', sans-serif !important;
+}
+
+/* Modern headings */
+.stApp h1,
+.stApp h2,
+.stApp h3 {
+    font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+    font-weight: 700 !important;
+}
+
+/* Make the tagline readable inside the navy hero */
+.linked-hero h3 {
+    color: #FFFFFF !important;
+}
+
+/* Improve hero description contrast */
+.linked-hero p {
+    color: #E2E8FF !important;
+}
+
+/* Give cards a clean, polished appearance */
+div[data-testid="stMetric"] {
+    background: rgba(255, 255, 255, 0.92) !important;
+    border: 1px solid #DDDDF5 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(47, 42, 100, 0.08) !important;
+}
+
+/* Smooth, rounded buttons */
+.stButton > button,
+.stFormSubmitButton > button {
+    border-radius: 12px !important;
+    font-weight: 700 !important;
+}
+
+/* Subtle navbar background */
+div[data-testid="stVerticalBlock"]:has(.fi-brand) {
+    border-radius: 18px;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
