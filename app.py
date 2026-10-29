@@ -960,6 +960,7 @@ def render_nav() -> None:
     label_visibility="collapsed",
     on_change=lambda: go_to(st.session_state["main_navigation"])
 )
+        
         with right:
             user_id = st.session_state.get("findit_user")
 
@@ -969,18 +970,34 @@ def render_nav() -> None:
                     email.split("@")[0] if email else "My Account"
                 )
 
+                st.button(
+                    f"👤 {display_name}",
+                    key="nav_account_name",
+                    use_container_width=True,
+                    on_click=go_to,
+                    args=("My Reports",),
+                )
+
+                if st.button(
+                    "Sign Out",
+                    key="nav_sign_out",
+                    use_container_width=True,
+                ):
+                    sign_out()
+                    st.session_state["page"] = "Home"
+                    st.rerun()
+
+            else:
+                st.button(
+                    "Sign In",
+                    type="primary",
+                    key="nav_cta",
+                    on_click=go_to,
+                    args=("Sign In",),
+                    use_container_width=True,
+                )
                 
-            with st.popover(display_name, icon=":material/account_circle:"):
-                st.caption(f"Signed in as: {email}")
-
-            if st.button("My Reports", key="nav_my_reports"):
-                go_to("My Reports")
-
-            if st.button("Sign Out", key="nav_sign_out"):
-                sign_out()
-                st.session_state["page"] = "Home"
-                st.rerun()
-
+                with st.popover(f"👤 {display_name}"):
                 st.write(f"Signed in as: {email}")
 
             if st.button("My Reports", key="nav_my_reports"):
