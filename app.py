@@ -997,22 +997,6 @@ def render_nav() -> None:
                     use_container_width=True,
                 )
                 
-                if st.button("My Reports", key="nav_my_reports"):
-                    go_to("My Reports")
-
-                if st.button("Sign Out", key="nav_sign_out"):
-                    sign_out()
-                    st.session_state["page"] = "Home"
-                    st.rerun()
-                else:
-                    st.button(
-                    "Sign In",
-                    type="primary",
-                    key="nav_cta",
-                    on_click=go_to,
-                    args=("Sign In",),
-                )
-
 
 def render_stat_cards(data: dict, settings: dict) -> None:
     if not data["ok"]:
