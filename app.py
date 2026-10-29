@@ -970,8 +970,8 @@ def render_nav() -> None:
                 )
 
                 
-                    with st.popover(display_name, icon=":material/account_circle:"):
-                          st.caption(f"Signed in as: {email}")
+            with st.popover(display_name, icon=":material/account_circle:"):
+                st.caption(f"Signed in as: {email}")
 
             if st.button("My Reports", key="nav_my_reports"):
                 go_to("My Reports")
