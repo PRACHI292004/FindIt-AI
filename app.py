@@ -997,24 +997,21 @@ def render_nav() -> None:
                     use_container_width=True,
                 )
                 
-            with st.popover(f"👤 {display_name}"):
-                st.write(f"Signed in as: {email}")
+                    if st.button("My Reports", key="nav_my_reports"):
+                        go_to("My Reports")
 
-                if st.button("My Reports", key="nav_my_reports"):
-                    go_to("My Reports")
-
-                if st.button("Sign Out", key="nav_sign_out"):
-                    sign_out()
-                    st.session_state["page"] = "Home"
-                    st.rerun()
-                else:
-                    st.button(
+                    if st.button("Sign Out", key="nav_sign_out"):
+                        sign_out()
+                        st.session_state["page"] = "Home"
+                        st.rerun()
+            else:
+                st.button(
                     "Sign In",
                     type="primary",
                     key="nav_cta",
                     on_click=go_to,
                     args=("Sign In",),
-                    )
+                )
 
 
 def render_stat_cards(data: dict, settings: dict) -> None:
