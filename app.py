@@ -736,10 +736,8 @@ def page_auth():
                             "Account request submitted. Check your email "
                             "for the confirmation link before signing in."
                         )
-                except Exception:
-                    st.error(
-                        "Account creation failed. Check your Supabase "
-                        "settings or whether this email is already registered."
+                except Exception as e:
+                       st.error(f"Account creation failed: {e}")
                     )
 
 def authentication_gate() -> bool:
