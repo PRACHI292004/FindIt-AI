@@ -969,7 +969,18 @@ def render_nav() -> None:
                     email.split("@")[0] if email else "My Account"
                 )
 
-                with st.popover(f"👤 {display_name}"):
+                
+                    with st.popover(display_name, icon=":material/account_circle:"):
+                          st.caption(f"Signed in as: {email}")
+
+            if st.button("My Reports", key="nav_my_reports"):
+                go_to("My Reports")
+
+            if st.button("Sign Out", key="nav_sign_out"):
+                sign_out()
+                st.session_state["page"] = "Home"
+                st.rerun()
+
                     st.write(f"Signed in as: {email}")
 
                     if st.button("My Reports", key="nav_my_reports"):
