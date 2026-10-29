@@ -998,7 +998,7 @@ def render_nav() -> None:
                 )
                 
             with st.popover(f"👤 {display_name}"):
-            st.write(f"Signed in as: {email}")
+                st.write(f"Signed in as: {email}")
 
             if st.button("My Reports", key="nav_my_reports"):
                 go_to("My Reports")
