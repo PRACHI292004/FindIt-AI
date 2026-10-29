@@ -677,6 +677,9 @@ def page_auth():
                 if user:
                     st.session_state["findit_user"] = user.id
                     st.session_state["findit_email"] = user.email
+                    st.session_state["findit_name"] = ((user.user_metadata or {}).get("full_name", "")
+                       if user.user_metadata else ""
+                    )
                     st.session_state["findit_access_token"] = (
                         response.session.access_token
                         if response.session else None
@@ -966,7 +969,6 @@ def render_nav() -> None:
 
             if user_id:
                 email = st.session_state.get("findit_email", "")
-                st.session_state["findit_name"] = ((user.user_metadata or {}).get("full_name", ""))
                 display_name = (
                     st.session_state.get("findit_name") or "My Account"
                 )
