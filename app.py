@@ -1004,8 +1004,8 @@ def render_nav() -> None:
                     sign_out()
                     st.session_state["page"] = "Home"
                     st.rerun()
-            else:
-                st.button(
+                else:
+                    st.button(
                     "Sign In",
                     type="primary",
                     key="nav_cta",
