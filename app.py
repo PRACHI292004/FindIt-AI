@@ -997,13 +997,13 @@ def render_nav() -> None:
                     use_container_width=True,
                 )
                 
-                    if st.button("My Reports", key="nav_my_reports"):
-                        go_to("My Reports")
+                if st.button("My Reports", key="nav_my_reports"):
+                    go_to("My Reports")
 
-                    if st.button("Sign Out", key="nav_sign_out"):
-                        sign_out()
-                        st.session_state["page"] = "Home"
-                        st.rerun()
+                if st.button("Sign Out", key="nav_sign_out"):
+                    sign_out()
+                    st.session_state["page"] = "Home"
+                    st.rerun()
             else:
                 st.button(
                     "Sign In",
