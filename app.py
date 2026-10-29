@@ -617,22 +617,34 @@ def get_supabase_client():
 
     return st.session_state["_supabase_client"]
 
+
 def load_user_reports():
-    """Load reports belonging to the currently signed-in user."""
+    """Load reports belonging to the signed-in user."""
     client = get_supabase_client()
     user_id = current_user()
 
     if not user_id:
         return []
 
-    response = (
-        client.table("item_reports")
-        .select("*")
-        .eq("user_id", user_id)
-        .execute()
-    )
+    try:
+        response = (
+            client.table("item_reports")
+            .select("*")
+            .eq("user_id", user_id)
+            .execute()
+        )
+        return response.data or []
 
-    return response.data or []
+    except Exception as exc:
+        print(
+            f"load_user_reports failed: "
+            f"{type(exc).__name__}: {exc}"
+        )
+        st.error(
+            "Could not load your reports. "
+            "Please check the application logs."
+        )
+        return []
 
 def current_user():
     """Return the currently authenticated user, if any."""
