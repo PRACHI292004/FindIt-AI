@@ -981,15 +981,15 @@ def render_nav() -> None:
                 st.session_state["page"] = "Home"
                 st.rerun()
 
-                    st.write(f"Signed in as: {email}")
+                st.write(f"Signed in as: {email}")
 
-                    if st.button("My Reports", key="nav_my_reports"):
-                        go_to("My Reports")
+            if st.button("My Reports", key="nav_my_reports"):
+                go_to("My Reports")
 
-                    if st.button("Sign Out", key="nav_sign_out"):
-                        sign_out()
-                        st.session_state["page"] = "Home"
-                        st.rerun()
+            if st.button("Sign Out", key="nav_sign_out"):
+                sign_out()
+                st.session_state["page"] = "Home"
+                st.rerun()
             else:
                 st.button(
                     "Sign In",
