@@ -714,12 +714,12 @@ def page_auth():
     {
         "email": new_email.strip(),
         "password": new_password,
-    },
-    options={
-        "data": {
-            "full_name": full_name.strip()
-        },
-        "email_redirect_to": "https://YOUR-APP-NAME.streamlit.app"
+        "options": {
+            "data": {
+                "full_name": full_name.strip()
+            },
+            "email_redirect_to": "https://YOUR-APP-NAME.streamlit.app"
+        }
     }
 )
                     if response.session and response.user:
@@ -736,8 +736,11 @@ def page_auth():
                             "Account request submitted. Check your email "
                             "for the confirmation link before signing in."
                         )
-                except Exception as e:
-                       st.error(f"Account creation failed: {e}")
+                except Exception:
+    st.error(
+        "Account creation failed. Check your Supabase settings "
+        "or whether this email is already registered."
+    )
 
 def authentication_gate() -> bool:
     """Show sign-up or sign-in and allow access only after login."""
