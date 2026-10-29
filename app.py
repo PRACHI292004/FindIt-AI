@@ -738,7 +738,6 @@ def page_auth():
                         )
                 except Exception as e:
                        st.error(f"Account creation failed: {e}")
-            )
 
 def authentication_gate() -> bool:
     """Show sign-up or sign-in and allow access only after login."""
