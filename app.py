@@ -246,6 +246,12 @@ section[data-testid="stSidebar"] {
     }
 }
 
+
+/* Hide the broken dropdown indicator in the account popover */
+div[data-testid="stPopover"] button [data-testid="stIconMaterial"] {
+    display: none !important;
+}
+
 </style>
 """, unsafe_allow_html=True)
 
