@@ -366,9 +366,8 @@ html, body, [data-testid="stAppViewContainer"] {
 .stApp p,
 .stApp label,
 .stApp input,
-.stApp textarea,
-.stApp button {
-    font-family: 'Inter', 'Segoe UI', sans-serif !important;
+.stApp textarea {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
 }
 
 /* Modern headings */
