@@ -973,7 +973,7 @@ def render_nav() -> None:
                     st.session_state.get("findit_name") or "My Account"
                 )
 
-                with st.popover(display_name, icon=":material/person:"):
+                with st.popover(display_name, icon=None):
                     st.caption(f"Signed in as: {email}")
 
                     if st.button("My Reports", key="nav_my_reports"):
