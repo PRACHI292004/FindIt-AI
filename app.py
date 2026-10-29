@@ -966,26 +966,21 @@ def render_nav() -> None:
 
             if user_id:
                 email = st.session_state.get("findit_email", "")
-                display_name = st.session_state.get("findit_name") or (
-                    email.split("@")[0] if email else "My Account"
+                st.session_state["findit_name"] = ((user.user_metadata or {}).get("full_name", ""))
+                display_name = (
+                    st.session_state.get("findit_name") or "My Account"
                 )
 
-                st.button(
-                    f"👤 {display_name}",
-                    key="nav_account_name",
-                    use_container_width=True,
-                    on_click=go_to,
-                    args=("My Reports",),
-                )
+                with st.popover(display_name, icon=":material/person:"):
+                    st.caption(f"Signed in as: {email}")
 
-                if st.button(
-                    "Sign Out",
-                    key="nav_sign_out",
-                    use_container_width=True,
-                ):
-                    sign_out()
-                    st.session_state["page"] = "Home"
-                    st.rerun()
+                    if st.button("My Reports", key="nav_my_reports"):
+                        go_to("My Reports")
+
+                    if st.button("Sign Out", key="nav_sign_out"):
+                        sign_out()
+                        st.session_state["page"] = "Home"
+                        st.rerun()
 
             else:
                 st.button(
